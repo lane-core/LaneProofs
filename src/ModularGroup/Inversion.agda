@@ -1,3 +1,5 @@
+{-# OPTIONS --safe --without-K --exact-split #-}
+
 module ModularGroup.Inversion where
 
 open import MLTT.Spartan
@@ -37,11 +39,7 @@ r²-inverse (θ (𝑟 (𝑠 x))) = composition-right-neutral ((θ x ^⁻¹) · �
                          ∙ composition-associative ((θ x ^⁻¹) · η 𝑆) (θ (𝑟² 𝐸)) (θ (𝑟 𝐸)) ⁻¹
 r²-inverse (θ (𝑟² x)) = composition-associative (η x ^⁻¹) (θ (𝑟 𝐸)) (θ (𝑟 𝐸)) ⁻¹
 
-
 s-inverse-right : (x : 𝓜) → (x · S) ^⁻¹ ＝ s (x ^⁻¹)
-r-inverse-right : (x : 𝓜) → (x · R²) ^⁻¹ ＝ r (x ^⁻¹)
-r²-inverse-right : (x : 𝓜) → (x · R) ^⁻¹ ＝ r² (x ^⁻¹)
-
 s-inverse-right (η 𝐸) = refl
 s-inverse-right (η 𝑆) = refl
 s-inverse-right (η (𝑠 x)) = s-inverse (θ x · η 𝑆)
@@ -54,9 +52,41 @@ s-inverse-right (θ (𝑟² x)) = r²-inverse (η x · η 𝑆)
                            ∙ ap (_· R) (s-inverse-right (η x))
                            ∙ composition-associative (η 𝑆) (η x ^⁻¹) (θ (𝑟 𝐸))
 
-r-inverse-right (η x) = ?
-r-inverse-right (θ x) = ?
-r²-inverse-right x = {!!}
+r-inverse-right : (x : 𝓜) → (x · R²) ^⁻¹ ＝ r (x ^⁻¹)
+r-inverse-right (η 𝐸) = refl
+r-inverse-right (η 𝑆) = refl
+r-inverse-right (η (𝑠 x)) = s-inverse (θ x · θ (𝑟² 𝐸))
+                          ∙ ap (_· S) (r-inverse-right (θ x))
+                          ∙ composition-associative (θ (𝑟 𝐸)) (θ x ^⁻¹) (η 𝑆)
+r-inverse-right (θ (𝑟 x)) = r-inverse (η x · θ (𝑟² 𝐸))
+                          ∙ ap (_· R²) (r-inverse-right (η x))
+                          ∙ composition-associative (θ (𝑟 𝐸)) (η x ^⁻¹) (θ (𝑟² 𝐸))
+r-inverse-right (θ (𝑟² x)) = r²-inverse (η x · θ (𝑟² 𝐸))
+                           ∙ ap (_· R) (r-inverse-right (η x))
+                           ∙ composition-associative (θ (𝑟 𝐸)) (η x ^⁻¹) (θ (𝑟 𝐸))
+
+r²-inverse-right : (x : 𝓜) → (x · R) ^⁻¹ ＝ r² (x ^⁻¹)
+r²-inverse-right (η 𝐸) = refl
+r²-inverse-right (η 𝑆) = refl
+r²-inverse-right (η (𝑠 x)) = s-inverse (θ x · θ (𝑟 𝐸))
+                           ∙ ap (_· S) (r²-inverse-right (θ x))
+                           ∙ composition-associative (θ (𝑟² 𝐸)) (θ x ^⁻¹) (η 𝑆)
+r²-inverse-right (θ (𝑟 x)) = r-inverse (η x · θ (𝑟 𝐸))
+                          ∙ ap (_· R²) (r²-inverse-right (η x))
+                          ∙ composition-associative (θ (𝑟² 𝐸)) (η x ^⁻¹) (θ (𝑟² 𝐸))
+r²-inverse-right (θ (𝑟² x)) = r²-inverse (η x · θ (𝑟 𝐸))
+                           ∙ ap (_· R) (r²-inverse-right (η x))
+                           ∙ composition-associative (θ (𝑟² 𝐸)) (η x ^⁻¹) (θ (𝑟 𝐸))
+
+inverse-involutive : (x : 𝓜) → (x ^⁻¹) ^⁻¹ ＝ x
+inverse-involutive (η 𝐸) = refl
+inverse-involutive (η 𝑆) = refl
+inverse-involutive (η (𝑠 x)) = s-inverse-right (θ x ^⁻¹)
+                             ∙ ap s (inverse-involutive (θ x))
+inverse-involutive (θ (𝑟 x)) = r-inverse-right (η x ^⁻¹)
+                             ∙ ap r (inverse-involutive (η x))
+inverse-involutive (θ (𝑟² x)) = r²-inverse-right (η x ^⁻¹)
+                              ∙ ap r² (inverse-involutive (η x))
 
 inverse-left-cancel : (x : 𝓜) → x ^⁻¹ · x ＝ E
 inverse-left-cancel (η 𝐸) = refl
@@ -86,41 +116,7 @@ inverse-right-cancel (θ (𝑟² x)) =
 𝓜-invertible : (x : 𝓜) → Σ x' ꞉ 𝓜 , (x' · x ＝ E) × (x · x' ＝ E)
 𝓜-invertible x = x ^⁻¹ , inverse-left-cancel x , inverse-right-cancel x
 
-
-
-inversion-injective-η : (x y : 𝓟) → (η x) ^⁻¹ ＝ (η y) ^⁻¹ → η x ＝ η y
-inversion-injective-η 𝐸 y p = {!!}
-inversion-injective-η 𝑆 y p = {!!}
-inversion-injective-η (𝑠 x) y p = {!!}
-
-inversion-injective-θ : (x y : 𝓝) → (θ x) ^⁻¹ ＝ (θ y) ^⁻¹ → (θ x) ＝ (θ y)
-inversion-injective-θ x y p = {!!}
-
 inversion-injective : (x y : 𝓜) → x ^⁻¹ ＝ y ^⁻¹ → x ＝ y
-inversion-injective (η 𝐸) (η y) p = {!!}
-inversion-injective (η 𝑆) (η y) p = {!!}
-inversion-injective (η (𝑠 x)) (η y) p = {!!}
-inversion-injective (η x) (θ y) p = {!!}
-inversion-injective (θ x) y p = {!!}
-
-inverse-involutive-η : (x : 𝓟) → (η x ^⁻¹) ^⁻¹ ＝ η x
-inverse-involutive-η 𝐸 = refl
-inverse-involutive-η 𝑆 = refl
-inverse-involutive-η (𝑠 x) = (((θ x ^⁻¹) · η 𝑆) ^⁻¹) ＝⟨ I ⟩
-                             (((θ x ^⁻¹) · η 𝑆) ^⁻¹) ＝⟨ {!!} ⟩
-                             η (𝑠 x) ∎
-  where
-    I : ((θ x ^⁻¹) · S) ^⁻¹ ＝ (((θ x ^⁻¹) · η 𝑆) ^⁻¹)
-    I = ap (_^⁻¹) (s-inverse (θ x) ⁻¹)
-
-
-inverse-involutive-θ : (x : 𝓝) → (θ x ^⁻¹) ^⁻¹ ＝ θ x
-inverse-involutive-θ (𝑟 x) = {!!}
-inverse-involutive-θ (𝑟² x) = {!!}
-
-inverse-involutive : (x : 𝓜) → x ＝ (x ^⁻¹) ^⁻¹
-inverse-involutive (η 𝐸) = refl
-inverse-involutive (η 𝑆) = refl
-inverse-involutive (η (𝑠 x)) = {!!}
-inverse-involutive (θ (𝑟 x)) = {!!}
-inverse-involutive (θ (𝑟² x)) = {!!}
+inversion-injective x y p = inverse-involutive x ⁻¹
+                          ∙ ap _^⁻¹ p
+                          ∙ inverse-involutive y

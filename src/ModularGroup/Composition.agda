@@ -48,3 +48,36 @@ composition-right-neutral (η (𝑠 x)) = ap s (composition-right-neutral (θ x)
 composition-right-neutral (θ (𝑟 x)) = ap r (composition-right-neutral (η x))
 composition-right-neutral (θ (𝑟² x)) = ap r² (composition-right-neutral (η x))
 
+composition-left-cancellable : (a : 𝓜) → left-cancellable (a ·_)
+composition-left-cancellable (η 𝐸) = id
+composition-left-cancellable (η 𝑆) = s-left-cancellable
+composition-left-cancellable (η (𝑠 x)) = composition-left-cancellable (θ x)
+                                       ∘ s-left-cancellable
+composition-left-cancellable (θ (𝑟 x)) = composition-left-cancellable (η x)
+                                       ∘ r-left-cancellable
+composition-left-cancellable (θ (𝑟² x)) = composition-left-cancellable (η x)
+                                        ∘ r²-left-cancellable
+
+--composition-right-cancellable : (a : 𝓜) → right-cancellable (_· a)
+--composition-right-cancellable (η 𝐸) g h p x = γ
+--  where
+--    Δ : g (x · η 𝐸) ＝ h (x · η 𝐸)
+--    Δ = p x
+--
+--    γ : g x ＝ h x
+--    γ = g x ＝⟨ ap g (composition-right-neutral x ⁻¹) ⟩
+--        g (x · η 𝐸) ＝⟨ Δ ⟩
+--        h (x · η 𝐸) ＝⟨ ap h (composition-right-neutral x) ⟩
+--        h x ∎
+--composition-right-cancellable (η 𝑆) g h p x = {!!}
+--composition-right-cancellable (η (𝑠 x₁)) g h p x = {!!}
+--composition-right-cancellable (θ y) g h p x = {!!}
+--  where
+--    Δ : g (x · a) ＝ h (x · a)
+--    Δ = p x
+--
+--    γ : g x ＝ h x
+--    γ = g x ＝⟨ {!!} ⟩
+--        g (x · a) ＝⟨ Δ ⟩
+--        h (x · a) ＝⟨ ap h {!composition-left-cancellable ?!} ⟩
+--        h x ∎
